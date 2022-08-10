@@ -16,4 +16,5 @@ public interface SavingAccountService {
     public Mono<SavingAccount> update(SavingAccount account);
     public Mono<Boolean> delete(String id);
     public Mono<Customer> findByDocument(String document);
+    public Mono<SavingAccount> findByAccountNumber(String accountNumber);
 }

@@ -57,35 +57,41 @@ public class SavingAccountImpl implements SavingAccountService {
             client.setId(customer.block().getId());
             account.setCustomer(client);
         } catch (NullPointerException e) {
-            throw new ModelNotFoundException("Customer does not exist");
+            throw new RuntimeException("Customer does not exist");
         }
 
-        Mono<SavingAccount> obj = repository.findByAccountNumber(account.getAccountNumber());
-        SavingAccount sv=new SavingAccount();
-        obj.map(o->{
-            if(client.getTypeCustomer()==TypeCustomer.PERSONAL){
-                o.setAccountNumber(null);
-                o.setCustomer(null);
-                throw new ModelNotFoundException("The customer already has an account. Customer has a PERSONAL account");
-            }else if (client.getTypeCustomer()==TypeCustomer.EMPRESARIAL){
-                throw new ModelNotFoundException("Cuenta empresarial");
-            }
-            return o;
-        }).delayElement(Duration.ofSeconds(1000)).switchIfEmpty(obj=repository.save(account)).delayElement(Duration.ofSeconds(1000)).subscribe();
+        Mono<SavingAccount> obj = repository.findByCustomerDocument(account.getCustomer().getDocument());
+        try {
+            obj.map(o -> {
+                if (client.getTypeCustomer() == TypeCustomer.PERSONAL) {
+                    o.setAccountNumber(null);
+                    o.setCustomer(null);
+                    throw new RuntimeException("The customer already has an account. Customer has a PERSONAL account");
+                } else if (client.getTypeCustomer() == TypeCustomer.EMPRESARIAL) {
+                    throw new RuntimeException("Cuenta empresarial");
+                }
+                this.repository.save(account);
+                return null;
+            }).subscribe();
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+        //.switchIfEmpty(obj=repository.save(account))
+        //obj=repository.save(account);
         return obj;
     }
     @Override
     @ExceptionHandler(IOException.class)
     public Mono<SavingAccount> update(SavingAccount account){
         log.info("Saving_account: implements update() method : {}",account.toString());
-        Mono<SavingAccount> obj=repository.findById(account.getAccountNumber());
+        Mono<SavingAccount> obj=repository.findByAccountNumber(account.getAccountNumber());
         try {
             obj
                     .flatMap(c -> {
                         return repository.save(account);
                     })
                     .switchIfEmpty(Mono.error(() ->
-                            new RuntimeException("Could not resolve view with name '" + "'")))
+                            new RuntimeException("Account number incorrect")))
                     .subscribe();
         }catch (Exception e)
         {
@@ -110,5 +116,10 @@ public class SavingAccountImpl implements SavingAccountService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Customer.class);
+    }
+
+    @Override
+    public Mono<SavingAccount> findByAccountNumber(String accountNumber) {
+        return repository.findByAccountNumber(accountNumber);
     }
 }

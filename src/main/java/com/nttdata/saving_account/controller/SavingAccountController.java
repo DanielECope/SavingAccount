@@ -25,6 +25,11 @@ public class SavingAccountController {
         log.info("Saving_account: controller findById() method ");
         return service.findById(id);
     }
+    @GetMapping("/findByAccountNumber/{accountNumber}")
+    public Mono<SavingAccount> findByAccountNumber(@PathVariable String accountNumber){
+        log.info("Saving_account: controller findById() method ");
+        return service.findByAccountNumber(accountNumber);
+    }
     @PostMapping(path = "/create")
     public Mono<SavingAccount> create(@RequestBody SavingAccount account) throws Exception {
         log.info("Saving_account: controller create() method : {}",account.toString());

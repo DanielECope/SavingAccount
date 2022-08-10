@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.Valid;
@@ -25,5 +26,6 @@ public class Customer {
     @Valid
     private TypeCustomer typeCustomer;
     @NotNull
+    @Indexed(unique = true)
     private String document;
 }
