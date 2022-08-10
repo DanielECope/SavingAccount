@@ -10,11 +10,10 @@ public interface SavingAccountService {
 
     Mono<SavingAccount> findByCustomerId(String dni);
 
-    Mono<SavingAccount> findByCustomerId(Customer dni);
-
     //public Mono<SavingAccount> findByCustomerId(String dni);
-    public Mono<SavingAccount> findById(String id);
-    public Mono<SavingAccount> save(SavingAccount account);
+    public Mono<SavingAccount> findById(String id) throws Exception;
+    public Mono<SavingAccount> save(SavingAccount account) throws Exception;
     public Mono<SavingAccount> update(SavingAccount account);
     public Mono<Boolean> delete(String id);
+    public Mono<Customer> findByDocument(String document);
 }

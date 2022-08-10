@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,12 +22,14 @@ public class SavingAccount {
     @NotNull
     private String accountNumber;
     @NotNull
+    @UniqueElements(message = "exists")
     private Customer customer;
     @NotNull
     private float commission;
     @NotNull
     private int movement_limit;
-    //@JsonFormat(pattern = "dd::MM::yyyy KK:mm a")
+    private int movementNumber;
+    private float amountAvailable;
     private LocalDateTime registration_date;
 
 }

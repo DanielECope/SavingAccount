@@ -21,13 +21,12 @@ public class SavingAccountController {
         return service.findAll();
     }
     @GetMapping("/list/{id}")
-    public Mono<SavingAccount> findById(@PathVariable String id){
+    public Mono<SavingAccount> findById(@PathVariable String id) throws Exception {
         log.info("Saving_account: controller findById() method ");
         return service.findById(id);
     }
     @PostMapping(path = "/create")
-    public Mono<SavingAccount> create(@RequestBody SavingAccount account)
-    {
+    public Mono<SavingAccount> create(@RequestBody SavingAccount account) throws Exception {
         log.info("Saving_account: controller create() method : {}",account.toString());
         return service.save(account);
     }
@@ -43,11 +42,11 @@ public class SavingAccountController {
         log.info("Saving_account: controller delete() method : {}",id);
         service.delete(id).map(obj->{
             if (obj){
-                return Mono.just("Cuenta de ahorro eliminado");
+                return Mono.just("Cuenta de ahorro eliminada");
             }else{
-                return Mono.just("La Cuenta de ahorro no puedo ser eliinada");
+                return Mono.just("La Cuenta de ahorro no puedo ser eliminada");
             }
         });
-        return Mono.just("La Cuenta de ahorro no puedo ser eliinada");
+        return Mono.just("La Cuenta de ahorro no puedo ser eliminada");
     }
 }
